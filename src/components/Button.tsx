@@ -6,7 +6,7 @@ interface IButton {
   onClick: () => void;
 }
 
-export const Button = ({ text, onClick }: IButton) => {
+export const Button: React.FC<IButton> = ({ text, onClick }) => {
   const isLoading = useSelector((state: RootState) => state.counter.isLoading);
 
   return (
