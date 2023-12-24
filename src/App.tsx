@@ -1,36 +1,41 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux"; // Используйте useDispatch напрямую
 import { Value } from "./components/Value";
 import { Button } from "./components/Button";
+import { AppDispatch, RootState } from "./Redux/CreateStore";
 import {
-  incrementAsync,
   decrementAsync,
-  incrementByValueAsync,
   decrementByValueAsync,
-  setInput,
-} from "./ducks/actions";
-
-import "./styles.css";
+  incrementAsync,
+  incrementByValueAsync,
+} from "./Redux/Counter/CounterActions";
+import { setInput } from "./Redux/Counter/CounterSlice";
 
 export default function App() {
-  const { input, value: curr } = useSelector((state: any) => state);
+  const { value: curr, input } = useSelector(
+    (state: RootState) => state.counter
+  );
 
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const increment = () => dispatch(incrementAsync());
   const decrement = () => dispatch(decrementAsync());
-  const incrementByValue = () => dispatch(incrementByValueAsync(curr, input));
-  const decrementByValue = () => dispatch(decrementByValueAsync(curr, input));
+  const incrementByValue = () =>
+    dispatch(incrementByValueAsync({ value: curr, input }));
+  const decrementByValue = () =>
+    dispatch(decrementByValueAsync({ value: curr, input }));
   const setInputValue = (value: any) => dispatch(setInput(value));
 
   return (
     <div className="App">
+      <h4 className="text-5xl my-4 text-red-500">Счетчик</h4>
       <Value />
-      <div style={{ marginBottom: 16 }}>
+      <div>
         <Button text="Увеличить" onClick={increment} />
         <Button text="Уменьшить" onClick={decrement} />
       </div>
       <div>
         <input
-          placeholder="изменить на значение"
+          className="outline-0 text-[#0D0C22] transition-colors text-base rounded-3xl py-2.5 px-12 mb-4 border-4 border-gray-300 bg-gray-100 hover:border-[#B0B8C1]"
+          placeholder="Изменить на значение..."
           onChange={({ target }) => {
             setInputValue(target.value);
           }}

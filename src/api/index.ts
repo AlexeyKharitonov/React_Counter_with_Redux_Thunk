@@ -1,6 +1,6 @@
 export const makeOperation = (
   value: number,
-  additional: number,
+  additional: number
 ): Promise<number> =>
   new Promise<number>((resolve) => {
     setTimeout(() => {
