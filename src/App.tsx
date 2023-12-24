@@ -9,23 +9,48 @@ import {
   incrementByValueAsync,
 } from "./Redux/Counter/CounterActions";
 import { setInput } from "./Redux/Counter/CounterSlice";
+import { useState } from "react";
+import { Loader } from "./components/Loader";
 
 export default function App() {
+  const [inputValue, setInputValue] = useState("");
   const { value: curr, input } = useSelector(
     (state: RootState) => state.counter
   );
+  const isLoading = useSelector((state: RootState) => state.counter.isLoading);
 
   const dispatch: AppDispatch = useDispatch();
   const increment = () => dispatch(incrementAsync());
   const decrement = () => dispatch(decrementAsync());
-  const incrementByValue = () =>
+
+  const incrementByValue = () => {
     dispatch(incrementByValueAsync({ value: curr, input }));
-  const decrementByValue = () =>
+    setInputValue("");
+  };
+
+  const decrementByValue = () => {
     dispatch(decrementByValueAsync({ value: curr, input }));
-  const setInputValue = (value: any) => dispatch(setInput(value));
+    setInputValue("");
+  };
+
+  const handleInputChange = ({
+    target: { value },
+  }: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(value);
+    const numValue = parseInt(value, 10) || 0;
+    dispatch(setInput(numValue));
+  };
 
   return (
-    <div className="App">
+    <div className="relative min-h-screen">
+      {isLoading && (
+        <div className="absolute inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
+          <div className="bg-transparent">
+            <Loader />
+          </div>
+        </div>
+      )}
+
       <h4 className="text-5xl my-4 text-red-500">Счетчик</h4>
       <Value />
       <div>
@@ -36,9 +61,8 @@ export default function App() {
         <input
           className="outline-0 text-[#0D0C22] transition-colors text-base rounded-3xl py-2.5 px-12 mb-4 border-4 border-gray-300 bg-gray-100 hover:border-[#B0B8C1]"
           placeholder="Изменить на значение..."
-          onChange={({ target }) => {
-            setInputValue(target.value);
-          }}
+          onChange={handleInputChange}
+          value={inputValue}
         />
         <div>
           <Button
